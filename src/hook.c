@@ -264,6 +264,11 @@ static BOOL EnumerateThreads(PFROZEN_THREADS pThreads)
 {
     BOOL succeeded = FALSE;
 
+    // filemon experiment: the target is still suspended when the hook is installed, so there
+    // are no other threads to freeze; skip the system-wide thread snapshot
+    if (GetEnvironmentVariableW(L"FILEMON_NOFREEZE", NULL, 0) != 0)
+        return TRUE;
+
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
     if (hSnapshot != INVALID_HANDLE_VALUE)
     {
